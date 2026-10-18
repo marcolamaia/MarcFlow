@@ -85,7 +85,7 @@
     "next-swagger-doc": "^0.4.1",
     "patch-package": "^8.0.1",
     "postinstall-postinstall": "^2.1.0",
-    "prisma": "^5.22.0",
+    "prisma": "^7.10.0",
     "swagger-ui-react": "^5.31.0",
     "tailwindcss": "^4",
     "ts-morph": "^28.0.0",
