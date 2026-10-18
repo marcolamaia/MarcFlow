@@ -32,7 +32,7 @@
     "@radix-ui/react-tooltip": "^1.2.8",
     "@tailwindcss/typography": "^0.5.19",
     "@types/react-syntax-highlighter": "^15.5.13",
-    "@whiskeysockets/baileys": "^7.0.0-rc.9",
+    "@whiskeysockets/baileys": "^7.0.0-rc14",
     "@xyflow/react": "^12.12.0",
     "archiver": "^7.0.1",
     "audio-decode": "^2.2.3",
