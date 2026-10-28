@@ -9,7 +9,7 @@ services:
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
       MYSQL_DATABASE: ${MYSQL_DATABASE:-marcflow}
     ports:
-      - "3306:3306"
+      - "127.0.0.1:3306:3306"
     volumes:
       - mysql_data:/var/lib/mysql
     healthcheck:
@@ -25,7 +25,7 @@ services:
     container_name: marcflow-app
     restart: always
     ports:
-      - "3000:3000"
+      - "127.0.0.1:3000:3000"
     environment:
       - DATABASE_URL=mysql://root:${MYSQL_ROOT_PASSWORD}@db:3306/${MYSQL_DATABASE:-marcflow}
       - AUTH_SECRET=${AUTH_SECRET}
@@ -34,6 +34,8 @@ services:
       - NODE_ENV=production
       - PORT=${PORT:-3000}
       - HOSTNAME=0.0.0.0
+      - NEXT_TELEMETRY_DISABLED=1
+      - SCARF_ANALYTICS=false
       - NEXT_PUBLIC_APP_URL=${BASE_URL:-http://localhost:3000}
       - NEXT_PUBLIC_API_URL=${BASE_URL:-http://localhost:3000}/api
       - BAILEYS_LOG_LEVEL=${BAILEYS_LOG_LEVEL:-error}

@@ -1,4 +1,6 @@
 FROM node:26-alpine AS builder
+ENV NEXT_TELEMETRY_DISABLED=1
+ENV SCARF_ANALYTICS=false
 RUN apk add --no-cache openssl ca-certificates
 WORKDIR /app
 
@@ -12,13 +14,14 @@ RUN npm ci --legacy-peer-deps && npm cache clean --force
 COPY . .
 RUN npx prisma generate && npm run build
 
-# Strip devDeps from node_modules after build
-# tsx needed at runtime, kept explicitly
-RUN npm prune --omit=dev && npm install --no-save tsx typescript
+# Startup needs the Prisma CLI, tsx and TypeScript from the locked installation.
+# Keep that installation instead of pruning and reinstalling the dev dependencies.
 
 # Production image
 FROM node:26-alpine AS runner
-RUN apk add --no-cache openssl ca-certificates
+ENV NEXT_TELEMETRY_DISABLED=1
+ENV SCARF_ANALYTICS=false
+RUN apk add --no-cache openssl ca-certificates ffmpeg
 WORKDIR /app
 
 COPY --from=builder /app/package*.json ./
@@ -35,4 +38,4 @@ ENV PORT=3000
 ENV HOSTNAME=0.0.0.0
 EXPOSE 3000
 
-CMD ["sh", "-c", "npx prisma db push && (if [ -n \"$ADMIN_EMAIL\"] && [ -n \"$ADMIN_PASSWORD\"]; then node scripts/setup-admin.js \"$ADMIN_EMAIL\" \"$ADMIN_PASSWORD\"; fi) && node node_modules/tsx/dist/cli.mjs src/server/index.ts"]
+CMD ["sh", "-c", "npx prisma db push && if [ -n \"$ADMIN_EMAIL\" ] && [ -n \"$ADMIN_PASSWORD\" ]; then node scripts/setup-admin.js \"$ADMIN_EMAIL\" \"$ADMIN_PASSWORD\"; fi && exec node node_modules/tsx/dist/cli.mjs src/server/bootstrap.ts"]

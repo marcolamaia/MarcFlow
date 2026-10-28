@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle, CardFooter, CardDescription } from "@/components/ui/card";
 import { useRouter } from 'next/navigation';
 import { toast } from "sonner";
+import { useSession } from '@/components/dashboard/session-provider';
 import { Label } from '@/components/ui/label';
 import { Smartphone, Plus, Trash2, Settings, RefreshCw, Power, UserPlus } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
@@ -33,6 +34,7 @@ type Session = {
 };
 
 export function SessionManager({ user }: { user: any }) {
+    const { refreshSessions } = useSession();
     const [sessions, setSessions] = useState<Session[]>([]);
     const [newSessionName, setNewSessionName] = useState("");
     const [newSessionId, setNewSessionId] = useState("");
@@ -64,6 +66,7 @@ export function SessionManager({ user }: { user: any }) {
 
             if (data.status === 'CONNECTED') {
                 fetchSessions(); // Refresh purely to get updated state from DB if needed
+                void refreshSessions();
             }
         });
 
@@ -110,6 +113,7 @@ export function SessionManager({ user }: { user: any }) {
             if (!res.ok || !session) throw new Error(responseData.error || responseData.message || "Falha ao criar");
 
             setSessions([...sessions, session]);
+            await refreshSessions();
             setNewSessionName("");
             setNewSessionId("");
             toast.success("Sessão criada com sucesso");

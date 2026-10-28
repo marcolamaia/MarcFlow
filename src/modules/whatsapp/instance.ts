@@ -156,7 +156,7 @@ export class WhatsAppInstance {
                     logger.warn("Instance", `Session ${this.sessionId} stopped. Credentials preserved.`);
 
                     // Remove from memory manager
-                    const { waManager } = require("./manager");
+                    const { waManager } = await import("./manager");
                     waManager.removeInstance(this.sessionId);
                     return;
                 }
